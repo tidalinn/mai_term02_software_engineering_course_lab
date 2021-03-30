@@ -15,14 +15,9 @@ const std::string &Config::get_port() const
     return _port;
 }
 
-const std::string &Config::get_read_request_ip() const
+const std::string &Config::get_host() const
 {
-    return _read_request_ip;
-}
-
-const std::string &Config::get_write_request_ip() const
-{
-    return _write_request_ip;
+    return _host;
 }
 
 const std::string &Config::get_login() const
@@ -44,14 +39,9 @@ std::string &Config::port()
     return _port;
 }
 
-std::string &Config::read_request_ip()
+std::string &Config::host()
 {
-    return _read_request_ip;
-}
-
-std::string &Config::write_request_ip()
-{
-    return _write_request_ip;
+    return _host;
 }
 
 std::string &Config::login()

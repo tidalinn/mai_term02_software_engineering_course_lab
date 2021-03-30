@@ -122,66 +122,83 @@ public:
                 return;
             }
         }
-        else
+        else if (form.has("search"))
         {
+            try
+            {
+                std::string  fn = form.get("first_name");
+                std::string  ln = form.get("last_name");
+                auto results = database::Author::search(fn,ln);
+                Poco::JSON::Array arr;
+                for (auto s : results)
+                    arr.add(s.toJSON());
+                Poco::JSON::Stringifier::stringify(arr, ostr);
+            }
+            catch (...)
+            {
+                ostr << "{ \"result\": false , \"reason\": \"not gound\" }";
+                return;
+            }
+            return;
+        }
+        else if (form.has("add"))
+        {
+            if (form.has("first_name"))
+                if (form.has("last_name"))
+                    if (form.has("email"))
+                        if (form.has("title"))
+                        {
+                            database::Author author;
+                            author.first_name() = form.get("first_name");
+                            author.last_name() = form.get("last_name");
+                            author.email() = form.get("email");
+                            author.title() = form.get("title");
 
-            if (form.has("add"))
-                if (form.has("first_name"))
-                    if (form.has("last_name"))
-                        if (form.has("email"))
-                            if (form.has("title"))
+                            bool check_result = true;
+                            std::string message;
+                            std::string reason;
+
+                            if (!check_name(author.get_first_name(), reason))
                             {
-                                database::Author author;
-                                author.first_name() = form.get("first_name");
-                                author.last_name() = form.get("last_name");
-                                author.email() = form.get("email");
-                                author.title() = form.get("title");
+                                check_result = false;
+                                message += reason;
+                                message += "<br>";
+                            }
 
-                                bool check_result = true;
-                                std::string message;
-                                std::string reason;
+                            if (!check_name(author.get_last_name(), reason))
+                            {
+                                check_result = false;
+                                message += reason;
+                                message += "<br>";
+                            }
 
-                                if (!check_name(author.get_first_name(), reason))
+                            if (!check_email(author.get_email(), reason))
+                            {
+                                check_result = false;
+                                message += reason;
+                                message += "<br>";
+                            }
+
+                            if (check_result)
+                            {
+                                try
                                 {
-                                    check_result = false;
-                                    message += reason;
-                                    message += "<br>";
+                                    author.save_to_mysql();
+                                    ostr << "{ \"result\": true }";
+                                    return;
                                 }
-
-                                if (!check_name(author.get_last_name(), reason))
+                                catch (...)
                                 {
-                                    check_result = false;
-                                    message += reason;
-                                    message += "<br>";
-                                }
-
-                                if (!check_email(author.get_email(), reason))
-                                {
-                                    check_result = false;
-                                    message += reason;
-                                    message += "<br>";
-                                }
-
-                                if (check_result)
-                                {
-                                    try
-                                    {
-                                        author.save_to_mysql();
-                                        ostr << "{ \"result\": true }";
-                                        return;
-                                    }
-                                    catch (...)
-                                    {
-                                        ostr << "{ \"result\": false , \"reason\": \" database error\" }";
-                                        return;
-                                    }
-                                }
-                                else
-                                {
-                                    ostr << "{ \"result\": false , \"reason\": \"" << message << "\" }";
+                                    ostr << "{ \"result\": false , \"reason\": \" database error\" }";
                                     return;
                                 }
                             }
+                            else
+                            {
+                                ostr << "{ \"result\": false , \"reason\": \"" << message << "\" }";
+                                return;
+                            }
+                        }
         }
 
         auto results = database::Author::read_all();

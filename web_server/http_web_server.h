@@ -73,17 +73,11 @@ protected:
                 .repeatable(false)
                 .callback(OptionCallback<HTTPWebServer>(this, &HTTPWebServer::handleHelp)));
         options.addOption(
-            Option("read", "r", "set ip address for read requests")
+            Option("host", "h", "set ip address for dtabase")
                 .required(false)
                 .repeatable(false)
                 .argument("value")
-                .callback(OptionCallback<HTTPWebServer>(this, &HTTPWebServer::handleReadIP)));
-        options.addOption(
-            Option("write", "w", "set ip address for write requests")
-                .required(false)
-                .repeatable(false)
-                .argument("value")
-                .callback(OptionCallback<HTTPWebServer>(this, &HTTPWebServer::handleWriteIP)));
+                .callback(OptionCallback<HTTPWebServer>(this, &HTTPWebServer::handleHost)));
         options.addOption(
             Option("port", "po", "set mysql port")
                 .required(false)
@@ -148,19 +142,13 @@ protected:
         Config::get().port() = value;
     }
 
-    void handleReadIP([[maybe_unused]] const std::string &name,
+    void handleHost([[maybe_unused]] const std::string &name,
                       [[maybe_unused]] const std::string &value)
     {
-        std::cout << "read_ip:" << value << std::endl;
-        Config::get().read_request_ip() = value;
+        std::cout << "host:" << value << std::endl;
+        Config::get().host() = value;
     }
 
-    void handleWriteIP([[maybe_unused]] const std::string &name,
-                       [[maybe_unused]] const std::string &value)
-    {
-        std::cout << "write_ip:" << value << std::endl;
-        Config::get().write_request_ip() = value;
-    }
 
 
     void handleHelp([[maybe_unused]] const std::string &name,
