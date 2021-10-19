@@ -210,8 +210,7 @@ namespace database
                 use(_first_name),
                 use(_last_name),
                 use(_email),
-                use(_title),
-                now;
+                use(_title);
 
             insert.execute();
 
