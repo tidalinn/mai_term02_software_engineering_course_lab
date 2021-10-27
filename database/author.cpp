@@ -5,6 +5,7 @@
 #include <Poco/Data/MySQL/Connector.h>
 #include <Poco/Data/MySQL/MySQLException.h>
 #include <Poco/Data/SessionFactory.h>
+#include <Poco/Data/RecordSet.h>
 #include <Poco/JSON/Parser.h>
 #include <Poco/Dynamic/Var.h>
 
@@ -97,11 +98,9 @@ namespace database
                 into(a._title),
                 use(id),
                 range(0, 1); //  iterate over result set one row at a time
-
-            if (!select.done())
-            {
-                select.execute();
-            }
+            select.execute();
+            Poco::Data::RecordSet rs(select);
+            if (!rs.moveFirst()) throw std::logic_error("not found");
 
             return a;
         }
