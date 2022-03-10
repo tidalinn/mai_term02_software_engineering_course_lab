@@ -98,6 +98,7 @@ namespace database
                 into(a._title),
                 use(id),
                 range(0, 1); //  iterate over result set one row at a time
+  
             select.execute();
             Poco::Data::RecordSet rs(select);
             if (!rs.moveFirst()) throw std::logic_error("not found");
@@ -136,7 +137,7 @@ namespace database
 
             while (!select.done())
             {
-                select.execute();
+                if(select.execute())
                 result.push_back(a);
             }
             return result;
@@ -177,8 +178,7 @@ namespace database
 
             while (!select.done())
             {
-                select.execute();
-                result.push_back(a);
+                if(select.execute())  result.push_back(a);
             }
             return result;
         }
