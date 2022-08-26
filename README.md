@@ -1,55 +1,27 @@
-# hl_event_server
+# Пример первого домашнего задания по курсу Архитектура программных систем
 
-## install C++
-sudo apt-get install gcc g++ cmake git libssl-dev zlib1g-dev librdkafka-dev mysql-server mysql-client libmysqlclient-dev libboost-all-dev
+# Подготовка к запуску
+## Настройка пользователя и базы в MySQL
+sudo mysql
+CREATE USER 'stud'@'localhost' IDENTIFIED BY 'stud';
+GRANT ALL PRIVILEGES ON * . * TO 'stud'@'localhost';
+CREATE DATABASE stud;
+CREATE TABLE IF NOT EXISTS `Author` (`id` INT NOT NULL AUTO_INCREMENT,`first_name` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,`last_name` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,`email` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,`title` VARCHAR(1024) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,PRIMARY KEY (`id`),KEY `fn` (`first_name`),KEY `ln` (`last_name`));
 
-## install java
+INSERT INTO Author (first_name,last_name,email,title) VALUES ('Иван','Иванов','ivanov@yandex.ru','господин');
 
-sudo apt install openjdk-8-jdk
+##  Запуск
+sudo ./build/hl_mai_lab_01 --host=localhost --port=3306 --login=stud --password=stud --database=stud
 
-sudo apt install openjdk-8-jre
+# Запросы
 
-## install iginte
+## Пример запроса данных по сущности
+http://localhost/author?id=1
 
-Download from https://ignite.apache.org/download.cgi#binaries
+{"email":"ivanov@yandex.ru","first_name":"Иван","id":1,"last_name":"Иванов","title":"господин"}
 
-build platforms/cpp
+## Пример запрса на изменение данных
+http://localhost/author?add&first_name=Bard&last_name=Simposon&email=bard@google.com&title=Mr
 
-## install CPPRDKafkfa
-
-
-// https://github.com/edenhill/librdkafka
-https://github.com/mfontanini/cppkafka
-mkdir build
-cd build
-cmake <OPTIONS> ..
-make
-make install
-
-
-## Install poco
-
-git clone -b master https://github.com/pocoproject/poco.git
-
-cd poco
-
-mkdir cmake-build
-
-cd cmake-build
-
-cmake ..
-
-cmake --build . --config Release
-
-sudo cmake --build . --target install
-
-## Install gtest
-sudo apt-get install libgtest-dev
-
-cd /usr/src/gtest/
-
-sudo cmake -DBUILD_SHARED_LIBS=ON
-
-sudo make
-
-sudo cp *.so /usr/lib
+## Пример запроса на поиск по маске
+http://localhost/author?search&first_name=B&last_name=S
