@@ -8,24 +8,70 @@ servers:
     description: Sample server
 paths:
   /author:
-    parameters:
+    get:
+      summary: Read a author information
+      parameters:
       - name: id
         description: Уникальный идентификатор автора
         in: query
         required: true
         schema:
           $ref: '#/components/schemas/author_id'
-    get:
-      summary: Read a spacecraft
       responses:
         '200':
-          description: The spacecraft corresponding to the provided `spacecraftId`
+          description: The author corresponding to the provided `id`
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/author'
         404:
-          description: No spacecraft found for the provided `spacecraftId`
+          description: No author found for the provided `id`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Add author information
+      parameters:
+      - name: first_name
+        description: Имя автора
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: last_name
+        description: Фамилия автора
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: email
+        description: email автора
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: title
+        description: Форма обращение к автору 
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Идентификатор, добавленного автора
+          content:
+            application/json:
+              schema:
+                type: integer
+        404:
+          description: No author found for the provided `id`
           content:
             application/json:
               schema:

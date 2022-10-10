@@ -141,7 +141,8 @@ public:
             }
             return;
         }
-        else if (form.has("add"))
+        else if(request.getMethod()==Poco::Net::HTTPRequest::HTTP_POST)
+        // if (form.has("add"))
         {
             if (form.has("first_name"))
                 if (form.has("last_name"))
@@ -184,7 +185,7 @@ public:
                                 try
                                 {
                                     author.save_to_mysql();
-                                    ostr << "{ \"result\": true }";
+                                    ostr << author.get_id();
                                     return;
                                 }
                                 catch (...)
@@ -195,7 +196,8 @@ public:
                             }
                             else
                             {
-                                ostr << "{ \"result\": false , \"reason\": \"" << message << "\" }";
+                                response.setStatus("404");
+                                ostr << message;                             
                                 return;
                             }
                         }
