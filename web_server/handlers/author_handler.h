@@ -103,22 +103,26 @@ public:
                        HTTPServerResponse &response)
     {
         HTMLForm form(request, request.stream());
-        response.setChunkedTransferEncoding(true);
-        response.setContentType("application/json");
-        std::ostream &ostr = response.send();
 
         if (form.has("id"))
         {
             long id = atol(form.get("id").c_str());
             try
             {
+                response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+                response.setChunkedTransferEncoding(true);
+                response.setContentType("application/json");
+                std::ostream &ostr = response.send();
                 database::Author result = database::Author::read_by_id(id);
                 Poco::JSON::Stringifier::stringify(result.toJSON(), ostr);
                 return;
             }
             catch (...)
             {
+                response.setStatus(Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
+                std::ostream &ostr = response.send();
                 ostr << "{ \"result\": false , \"reason\": \"not found\" }";
+                response.send();
                 return;
             }
         }
@@ -126,23 +130,29 @@ public:
         {
             try
             {
-                std::string  fn = form.get("first_name");
-                std::string  ln = form.get("last_name");
-                auto results = database::Author::search(fn,ln);
+                std::string fn = form.get("first_name");
+                std::string ln = form.get("last_name");
+                auto results = database::Author::search(fn, ln);
                 Poco::JSON::Array arr;
                 for (auto s : results)
                     arr.add(s.toJSON());
+                response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+                response.setChunkedTransferEncoding(true);
+                response.setContentType("application/json");
+                std::ostream &ostr = response.send();
                 Poco::JSON::Stringifier::stringify(arr, ostr);
             }
             catch (...)
             {
-                ostr << "{ \"result\": false , \"reason\": \"not gound\" }";
+                response.setStatus(Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
+                std::ostream &ostr = response.send();
+                ostr << "{ \"result\": false , \"reason\": \"not found\" }";
+                response.send();
                 return;
             }
             return;
         }
-        else if(request.getMethod()==Poco::Net::HTTPRequest::HTTP_POST)
-        // if (form.has("add"))
+        else if (request.getMethod() == Poco::Net::HTTPRequest::HTTP_POST)
         {
             if (form.has("first_name"))
                 if (form.has("last_name"))
@@ -185,29 +195,36 @@ public:
                                 try
                                 {
                                     author.save_to_mysql();
+                                    response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+                                    response.setChunkedTransferEncoding(true);
+                                    response.setContentType("application/json");
+                                    std::ostream &ostr = response.send();
                                     ostr << author.get_id();
                                     return;
                                 }
                                 catch (...)
                                 {
-                                    ostr << "{ \"result\": false , \"reason\": \" database error\" }";
+                                    response.setStatus(Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
+                                    std::ostream &ostr = response.send();
+                                    ostr << "database error";
+                                    response.send();
                                     return;
                                 }
                             }
                             else
                             {
-                                response.setStatus("404");
-                                ostr << message;                             
+                                response.setStatus(Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
+                                std::ostream &ostr = response.send();
+                                ostr << message;
+                                response.send();
                                 return;
                             }
                         }
         }
-
-        auto results = database::Author::read_all();
-        Poco::JSON::Array arr;
-        for (auto s : results)
-            arr.add(s.toJSON());
-        Poco::JSON::Stringifier::stringify(arr, ostr);
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
+        std::ostream &ostr = response.send();
+        ostr << "request error";
+        response.send();
     }
 
 private:
