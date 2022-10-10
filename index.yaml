@@ -7,6 +7,41 @@ servers:
   - url: http://192.168.64.6
     description: Sample server
 paths:
+  /search:
+    get:
+      summary: Search authors by mask of first name and last name
+      parameters:
+      - name: first_name
+        description: Имя
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: last_name
+        description: Фамилия
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The authors corresponding to the provided masks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authors'
+        404:
+          description: No author found for the provided mask
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /author:
     get:
       summary: Read a author information
@@ -87,6 +122,10 @@ components:
     author_id:
       description: Уникальный идентификатор автора
       type: integer
+    authors:
+      type: array
+      items:
+        $ref: '#/components/schemas/author'
     author:
       type: object
       required:

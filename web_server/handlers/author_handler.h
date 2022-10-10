@@ -103,7 +103,6 @@ public:
                        HTTPServerResponse &response)
     {
         HTMLForm form(request, request.stream());
-
         if (form.has("id"))
         {
             long id = atol(form.get("id").c_str());
@@ -126,10 +125,13 @@ public:
                 return;
             }
         }
-        else if (form.has("search"))
+        else if ([](const std::string &str,const std::string & prefix){
+                    return str.size() >= prefix.size() && 0 == str.compare(0, prefix.size(), prefix);}
+                    (request.getURI(),"/search"))
         {
             try
             {
+                
                 std::string fn = form.get("first_name");
                 std::string ln = form.get("last_name");
                 auto results = database::Author::search(fn, ln);

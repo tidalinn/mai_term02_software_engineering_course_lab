@@ -14,14 +14,4 @@ INSERT INTO Author (first_name,last_name,email,title) VALUES ('Иван','Ива
 sudo ./build/hl_mai_lab_01 --host=localhost --port=3306 --login=stud --password=stud --database=stud
 
 # Запросы
-
-## Пример запроса данных по сущности
-http://localhost/author?id=1
-
-{"email":"ivanov@yandex.ru","first_name":"Иван","id":1,"last_name":"Иванов","title":"господин"}
-
-## Пример запрса на изменение данных
-http://localhost/author?add&first_name=Bard&last_name=Simposon&email=bard@google.com&title=Mr
-
-## Пример запроса на поиск по маске
-http://localhost/author?search&first_name=B&last_name=S
+index.yaml
