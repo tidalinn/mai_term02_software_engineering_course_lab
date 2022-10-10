@@ -1,0 +1,70 @@
+openapi: '3.0.0'
+info:
+  version: '1.0.0'
+  title: 'Arch Lab Example API'
+  description: Пример API для первого домашнего задания по курсу Архитектура программных систем
+servers:
+  - url: http://192.168.64.6
+    description: Sample server
+paths:
+  /author:
+    parameters:
+      - name: id
+        description: Уникальный идентификатор автора
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/author_id'
+    get:
+      summary: Read a spacecraft
+      responses:
+        '200':
+          description: The spacecraft corresponding to the provided `spacecraftId`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/author'
+        404:
+          description: No spacecraft found for the provided `spacecraftId`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    author_id:
+      description: Уникальный идентификатор автора
+      type: integer
+    author:
+      type: object
+      required:
+        - id
+        - first_name
+        - last_name
+        - email
+        - title
+      properties:
+        id:
+          $ref: '#/components/schemas/author_id'
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        title:
+          type: string
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          description: A human readable error message
+          type: string
