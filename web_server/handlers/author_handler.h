@@ -103,6 +103,7 @@ public:
                        HTTPServerResponse &response)
     {
         HTMLForm form(request, request.stream());
+        
         if (form.has("id"))
         {
             long id = atol(form.get("id").c_str());
