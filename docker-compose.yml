@@ -20,6 +20,10 @@ services:
       - arch-network
     ports:
       - 3360:3306
+    healthcheck:
+      test: "/usr/bin/mysql --user=stud --password=stud --execute \"SHOW DATABASES;\""
+      timeout: 20s
+      retries: 5
     volumes:
       - db-node-ex01-data:/var/lib/mysql
 
@@ -39,7 +43,9 @@ services:
     networks:
       - arch-network
     depends_on:
-      - mai-db-node-ex01
+      mai-db-node-ex01:
+        condition: service_healthy
+
 
 
   
