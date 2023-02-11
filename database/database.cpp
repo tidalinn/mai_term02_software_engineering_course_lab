@@ -9,10 +9,13 @@ namespace database{
         _connection_string+=Config::get().get_login();
         _connection_string+=";db=";
         _connection_string+=Config::get().get_database();
+        _connection_string+=";port=";
+        _connection_string+=Config::get().get_port();
         _connection_string+=";password=";
         _connection_string+=Config::get().get_password();
 
-        Poco::Data::MySQL::Connector::registerConnector();
+        std::cout << "Connection string:" << _connection_string << std::endl;
+         Poco::Data::MySQL::Connector::registerConnector();
         _pool = std::make_unique<Poco::Data::SessionPool>(Poco::Data::MySQL::Connector::KEY, _connection_string);
     }
 

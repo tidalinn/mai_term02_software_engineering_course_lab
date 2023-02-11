@@ -25,12 +25,6 @@ namespace database
         {
 
             Poco::Data::Session session = database::Database::get().create_session();
-            //*
-            Statement drop_stmt(session);
-            drop_stmt << "DROP TABLE IF EXISTS Author", now;
-            //*/
-
-            // (re)create table
             Statement create_stmt(session);
             create_stmt << "CREATE TABLE IF NOT EXISTS `Author` (`id` INT NOT NULL AUTO_INCREMENT,"
                         << "`first_name` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,"
