@@ -1,4 +1,4 @@
-version: '3.3'
+version: '2.1'
 
 services:
   mai-db-node-ex01:
@@ -46,9 +46,6 @@ services:
       mai-db-node-ex01:
         condition: service_healthy
 
-
-
-  
 volumes:
   db-node-ex01-data:
 
