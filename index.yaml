@@ -5,11 +5,11 @@ info:
   description: Пример API для первого домашнего задания по курсу Архитектура программных систем
 servers:
   - url: http://localhost:8080
-    description: Sample server
+    description: Example server
 paths:
   /search:
     get:
-      summary: Search authors by mask of first name and last name
+      summary: Поиск пользователей по маске имени и фамилии
       parameters:
       - name: first_name
         description: Имя
@@ -25,13 +25,13 @@ paths:
           type: string
       responses:
         '200':
-          description: The authors corresponding to the provided masks
+          description: The users for the provided masks
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/authors'
+                $ref: '#/components/schemas/users'
         404:
-          description: No author found for the provided mask
+          description: No user found for the provided mask
           content:
             application/json:
               schema:
@@ -42,91 +42,132 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /author:
+  /auth:
     get:
-      summary: Read a author information
+      summary: Проверка аутентификации
       parameters:
-      - name: id
-        description: Уникальный идентификатор автора
+      - name: login
+        description: Логин пользователя
         in: query
         required: true
         schema:
-          $ref: '#/components/schemas/author_id'
+          type: string
+      - name: password
+        description: Пароль пользователя
+        in: query
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: The author corresponding to the provided `id`
+          description: User ID
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/author'
+               type: string
+        401:
+          description: Not authentication
+          content:
+            application/json:
+              schema:
+                type: string
+  /user:
+    get:
+      summary: Чтение информации о пользователе
+      parameters:
+      - name: id
+        description: Уникальный идентификатор пользователя
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/user_id'
+      responses:
+        '200':
+          description: Найденный пользователь
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
         404:
-          description: No author found for the provided `id`
+          description: Пользователь не найден
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         500:
-          description: Unexpected error
+          description: Неожиданная ошибка
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
     post:
-      summary: Add author information
+      summary: Добавление нового пользователя
       parameters:
       - name: first_name
-        description: Имя автора
+        description: Имя пользователя
         in: query
         required: true
         schema:
           type: string
       - name: last_name
-        description: Фамилия автора
+        description: Фамилия пользователя
         in: query
         required: true
         schema:
           type: string
       - name: email
-        description: email автора
+        description: email пользователя
         in: query
         required: true
         schema:
           type: string
       - name: title
-        description: Форма обращение к автору 
+        description: Форма обращение к пользователя 
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: login
+        description: login пользователя
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: password
+        description: пароль пользователя
         in: query
         required: true
         schema:
           type: string
       responses:
         '200':
-          description: Идентификатор, добавленного автора
+          description: Идентификатор, добавленного пользователя
           content:
             application/json:
               schema:
                 type: integer
         404:
-          description: No author found for the provided `id`
+          description: Ошибка добавления пользователя
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         500:
-          description: Unexpected error
+          description: Неожиданная ошибка
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    author_id:
-      description: Уникальный идентификатор автора
+    user_id:
+      description: Уникальный идентификатор пользователя
       type: integer
-    authors:
+    users:
       type: array
       items:
-        $ref: '#/components/schemas/author'
-    author:
+        $ref: '#/components/schemas/user'
+    user:
       type: object
       required:
         - id
@@ -134,9 +175,11 @@ components:
         - last_name
         - email
         - title
+        - login
+        - password
       properties:
         id:
-          $ref: '#/components/schemas/author_id'
+          $ref: '#/components/schemas/user_id'
         first_name:
           type: string
         last_name:
@@ -145,11 +188,15 @@ components:
           type: string
         title:
           type: string
+        login:
+          type: string
+        password:
+          type: string
     Error:
       type: object
       required:
         - message
       properties:
         message:
-          description: A human readable error message
+          description: Сообщение о ошибке
           type: string

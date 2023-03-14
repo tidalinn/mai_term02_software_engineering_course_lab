@@ -38,7 +38,7 @@ using Poco::Util::OptionSet;
 using Poco::Util::OptionCallback;
 using Poco::Util::HelpFormatter;
 
-#include "handlers/author_handler.h"
+#include "handlers/user_handler.h"
 
 
 static bool startsWith(const std::string& str, const std::string& prefix)
@@ -59,9 +59,10 @@ public:
         const HTTPServerRequest& request)
     {
 
-        if (startsWith(request.getURI(),"/author") ||
-            startsWith(request.getURI(),"/search") ) 
-            return new AuthorHandler(_format);
+        if (startsWith(request.getURI(),"/user") ||
+            startsWith(request.getURI(),"/search") ||
+            startsWith(request.getURI(),"/auth")) 
+            return new UserHandler(_format);
         return 0;
     }
 
