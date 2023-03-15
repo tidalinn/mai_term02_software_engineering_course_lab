@@ -101,6 +101,7 @@ using Poco::Util::OptionSet;
 using Poco::Util::ServerApplication;
 
 #include "../helper.h"
+#include <optional>
 
 class OtherHandler : public HTTPRequestHandler
 {
