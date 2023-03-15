@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.2)
 project(hl_server C CXX)
 
 SET (EXAMPLE_BINARY "hl_mai_lab_01")
+SET (OTHER_SERVICE "other_service")
 
 find_package(OpenSSL)
 find_package(Threads)
@@ -40,5 +41,24 @@ target_link_libraries(${EXAMPLE_BINARY} PRIVATE
 
 set_target_properties(${EXAMPLE_BINARY} PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(${EXAMPLE_BINARY} PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
+
+add_executable(${OTHER_SERVICE} other_main.cpp)
+
+
+target_include_directories(${OTHER_SERVICE} PRIVATE "${CMAKE_BINARY_DIR}")
+target_compile_options(${OTHER_SERVICE} PRIVATE -Wall -Wextra -pedantic -Werror )
+
+
+target_link_libraries(${OTHER_SERVICE} PRIVATE 
+                             ${CMAKE_THREAD_LIBS_INIT} 
+                             ${Poco_LIBRARIES}
+                             "PocoData"
+                             "PocoDataMySQL"
+                             "mysqlclient"
+                             ZLIB::ZLIB)
+
+
+set_target_properties(${OTHER_SERVICE} PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(${OTHER_SERVICE} PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
 
 

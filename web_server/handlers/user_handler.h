@@ -44,6 +44,22 @@ using Poco::Util::OptionSet;
 using Poco::Util::ServerApplication;
 
 #include "../../database/user.h"
+#include "../../helper.h"
+
+static bool hasSubstr(const std::string &str, const std::string &substr)
+{
+    if (str.size() < substr.size())
+        return false;
+    for (size_t i = 0; i <= str.size() - substr.size(); ++i)
+    {
+        bool ok{true};
+        for (size_t j = 0; ok && (j < substr.size()); ++j)
+            ok = (str[i + j] == substr[j]);
+        if (ok)
+            return true;
+    }
+    return false;
+}
 
 class UserHandler : public HTTPRequestHandler
 {
@@ -134,50 +150,51 @@ public:
                     Poco::JSON::Object::Ptr root = new Poco::JSON::Object();
                     root->set("type", "/errors/not_found");
                     root->set("title", "Internal exception");
-                    root->set("status", Poco::Net::HTTPResponse::HTTPStatus::HTTP_NOT_FOUND);
-                    root->set("detail", "nuser ot found");
+                    root->set("status", "404");
+                    root->set("detail", "user ot found");
                     root->set("instance", "/user");
                     std::ostream &ostr = response.send();
                     Poco::JSON::Stringifier::stringify(root, ostr);
                     return;
                 }
             }
-            else if ([](const std::string &str, const std::string &prefix)
-                     { return str.size() >= prefix.size() && 0 == str.compare(0, prefix.size(), prefix); }(request.getURI(), "/auth"))
+            else if (hasSubstr(request.getURI(), "/auth"))
             {
 
-                std::string login = form.get("login");
-                std::string password = form.get("password");
+                std::string scheme;
+                std::string info;
+                request.getCredentials(scheme, info);
+                std::cout << "scheme: " << scheme << " identity: " << info << std::endl;
 
-                if (auto id = database::User::auth(login, password))
+                std::string login, password;
+                if (scheme == "Basic")
                 {
-                    response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
-                    response.setChunkedTransferEncoding(true);
-                    response.setContentType("application/json");
-                    std::ostream &ostr = response.send();
-                    ostr << "{ \"id\"=\"" << *id << "\"}" << std::endl;
-                    return;
-                }
-                else
-                {
-                    response.setStatus(Poco::Net::HTTPResponse::HTTPStatus::HTTP_UNAUTHORIZED);
-                    response.setChunkedTransferEncoding(true);
-                    response.setContentType("application/json");
-                    Poco::JSON::Object::Ptr root = new Poco::JSON::Object();
-                    root->set("type", "/errors/unauthorized");
-                    root->set("title", "Internal exception");
-                    root->set("status", "401");
-                    root->set("detail", "not authorized");
-                    root->set("instance", "/auth");
-                    std::ostream &ostr = response.send();
-                    Poco::JSON::Stringifier::stringify(root, ostr);
-                    return;
+                    get_identity(info, login, password);
+                    if (auto id = database::User::auth(login, password))
+                    {
+                        response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+                        response.setChunkedTransferEncoding(true);
+                        response.setContentType("application/json");
+                        std::ostream &ostr = response.send();
+                        ostr << "{ \"id\" : \"" << *id << "\"}" << std::endl;
+                        return;
+                    }
                 }
 
+                response.setStatus(Poco::Net::HTTPResponse::HTTPStatus::HTTP_UNAUTHORIZED);
+                response.setChunkedTransferEncoding(true);
+                response.setContentType("application/json");
+                Poco::JSON::Object::Ptr root = new Poco::JSON::Object();
+                root->set("type", "/errors/unauthorized");
+                root->set("title", "Internal exception");
+                root->set("status", "401");
+                root->set("detail", "not authorized");
+                root->set("instance", "/auth");
+                std::ostream &ostr = response.send();
+                Poco::JSON::Stringifier::stringify(root, ostr);
                 return;
             }
-            else if ([](const std::string &str, const std::string &prefix)
-                     { return str.size() >= prefix.size() && 0 == str.compare(0, prefix.size(), prefix); }(request.getURI(), "/search"))
+            else if (hasSubstr(request.getURI(), "/search"))
             {
 
                 std::string fn = form.get("first_name");

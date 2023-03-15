@@ -1,17 +1,19 @@
 # Пример первого домашнего задания по курсу Архитектура программных систем
 
-# Подготовка к запуску
-## Настройка пользователя и базы в MySQL
-sudo mysql
-CREATE USER 'stud'@'localhost' IDENTIFIED BY 'stud';
-GRANT ALL PRIVILEGES ON * . * TO 'stud'@'localhost';
-CREATE DATABASE stud;
-CREATE TABLE IF NOT EXISTS `Author` (`id` INT NOT NULL AUTO_INCREMENT,`first_name` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,`last_name` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,`email` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,`title` VARCHAR(1024) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,PRIMARY KEY (`id`),KEY `fn` (`first_name`),KEY `ln` (`last_name`));
+Обращаю внимание что в сервисах нужно реализовтаь схему простой аутентификации (в данном случае) other_service - выполняет роль стороннего сервиса, а сервис hl_mai_lab_01 - сервиса который работает с данными пользователей и осуществляет аутентификацию
+```plantuml
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-INSERT INTO Author (first_name,last_name,email,title) VALUES ('Иван','Иванов','ivanov@yandex.ru','господин');
 
-##  Запуск
-sudo ./build/hl_mai_lab_01 --host=localhost --port=3306 --login=stud --password=stud --database=stud
+Person(user, "Пользователь")
 
-# Запросы
-index.yaml
+Container(user_service, "Сервис работы с пользователем", "C++")    
+Container(other_service, "Сервис делающий что-то", "C++") 
+
+Rel(user, user_service, "Управлять пользователям")
+Rel(user, other_service, "Сделать что-то полезное")
+Rel(other_service,user_service, "/auth - проверка логина/пароля")
+
+@enduml
+```

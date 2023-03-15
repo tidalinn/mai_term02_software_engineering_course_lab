@@ -41,12 +41,6 @@ using Poco::Util::HelpFormatter;
 #include "handlers/user_handler.h"
 
 
-static bool startsWith(const std::string& str, const std::string& prefix)
-{
-    return str.size() >= prefix.size() && 0 == str.compare(0, prefix.size(), prefix);
-}
-
-
 class HTTPRequestFactory: public HTTPRequestHandlerFactory
 {
 public:
@@ -59,9 +53,10 @@ public:
         const HTTPServerRequest& request)
     {
 
-        if (startsWith(request.getURI(),"/user") ||
-            startsWith(request.getURI(),"/search") ||
-            startsWith(request.getURI(),"/auth")) 
+        std::cout << "request:" << request.getURI()<< std::endl;
+        if (hasSubstr(request.getURI(),"/user") ||
+            hasSubstr(request.getURI(),"/search") ||
+            hasSubstr(request.getURI(),"/auth")) 
             return new UserHandler(_format);
         return 0;
     }

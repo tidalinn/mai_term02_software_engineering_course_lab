@@ -45,19 +45,6 @@ paths:
   /auth:
     get:
       summary: Проверка аутентификации
-      parameters:
-      - name: login
-        description: Логин пользователя
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: password
-        description: Пароль пользователя
-        in: query
-        required: true
-        schema:
-          type: string
       responses:
         '200':
           description: User ID
@@ -200,3 +187,9 @@ components:
         message:
           description: Сообщение о ошибке
           type: string
+  securitySchemes:
+      basicAuth:     
+        type: http
+        scheme: basic
+security:
+  - basicAuth: []
