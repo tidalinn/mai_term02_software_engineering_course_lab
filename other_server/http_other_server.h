@@ -97,9 +97,6 @@ using Poco::Util::ServerApplication;
 #include <optional>
 #include "../helper.h"
 
-
-
-
 class OtherHandler : public HTTPRequestHandler
 {
 
