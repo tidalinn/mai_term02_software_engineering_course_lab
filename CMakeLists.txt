@@ -20,6 +20,9 @@ include_directories("/usr/include/mysql")
 include_directories("/usr/local/include/mysql")
 link_directories("/usr/local/lib")
 
+SET(CMAKE_CXX_STANDARD 17)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_executable(${EXAMPLE_BINARY} main.cpp 
                                  config/config.cpp 
                                  database/database.cpp
@@ -28,7 +31,8 @@ add_executable(${EXAMPLE_BINARY} main.cpp
 
 target_include_directories(${EXAMPLE_BINARY} PRIVATE "${CMAKE_BINARY_DIR}")
 target_compile_options(${EXAMPLE_BINARY} PRIVATE -Wall -Wextra -pedantic -Werror )
-
+set_target_properties(${EXAMPLE_BINARY} PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(${EXAMPLE_BINARY} PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(${EXAMPLE_BINARY} PRIVATE 
                              ${CMAKE_THREAD_LIBS_INIT} 
@@ -39,15 +43,13 @@ target_link_libraries(${EXAMPLE_BINARY} PRIVATE
                              ZLIB::ZLIB)
 
 
-set_target_properties(${EXAMPLE_BINARY} PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(${EXAMPLE_BINARY} PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
+
 
 add_executable(${OTHER_SERVICE} other_main.cpp)
-
-
 target_include_directories(${OTHER_SERVICE} PRIVATE "${CMAKE_BINARY_DIR}")
 target_compile_options(${OTHER_SERVICE} PRIVATE -Wall -Wextra -pedantic -Werror )
-
+set_target_properties(${OTHER_SERVICE} PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(${OTHER_SERVICE} PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(${OTHER_SERVICE} PRIVATE 
                              ${CMAKE_THREAD_LIBS_INIT} 
@@ -58,7 +60,6 @@ target_link_libraries(${OTHER_SERVICE} PRIVATE
                              ZLIB::ZLIB)
 
 
-set_target_properties(${OTHER_SERVICE} PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(${OTHER_SERVICE} PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
+
 
 
