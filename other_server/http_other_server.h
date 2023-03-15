@@ -77,6 +77,7 @@ using Poco::Util::ServerApplication;
 #include <Poco/Base64Encoder.h>
 #include <Poco/Base64Decoder.h>
 #include <iostream>
+#include <string>
 #include <fstream>
 
 using Poco::DateTimeFormat;
