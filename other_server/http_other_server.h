@@ -165,8 +165,13 @@ public:
             get_identity(info, login, password);
             std::cout << "login:" << login << std::endl;
             std::cout << "password:" << password << std::endl;
+            std::string host = "localhost";
+            std::string url;
 
-            if (do_get("http://localhost:8080/auth", login, password)) // do authentificate
+            if(std::getenv("SERVICE_HOST")!=nullptr) host = std::getenv("SERVICE_HOST");
+            url = "http://" + host+":8080/auth";
+
+            if (do_get(url, login, password)) // do authentificate
             {
 
                 response.setStatus(Poco::Net::HTTPResponse::HTTPStatus::HTTP_OK);
