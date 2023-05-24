@@ -1,0 +1,160 @@
+openapi: "3.0.0"
+info:
+    version: "1.0.0"
+    phone: "API RouteService"
+    description: API для работы с маршрутами
+servers:
+    - url: http://localhost:8082
+      description: route server
+paths:
+    /add_route:
+        post:
+            summary: Добавление маршрута
+            parameters:
+                - name: route_name
+                  description: Название маршрута
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+                - name: creator_id
+                  description: id пользователя
+                  in: query
+                  required: true
+                  schema:
+                      type: integer
+                - name: point_start
+                  description: Аннотация
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+                - name: point_end
+                  description: Текст маршрута
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+                - name: point_other
+                  description: Дата создания
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: The route was created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/route"
+                404:
+                    description: The route was not created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+    /search_route:
+        get:
+            summary: Поиск маршрута
+            parameters:
+            - name: route_id
+              description: идентификатор маршрута
+              in: query
+              required: true
+              schema:
+                $ref: "#/components/schemas/route_id"
+            responses:
+                "200":
+                    description: All rides were printed
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/routes"
+                404:
+                    description: Error with rides get read
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+    /read_all_routes:
+        get:
+            summary: Вывести все маршруты
+            responses:
+                "200":
+                    description: All routes were printed
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/routes"
+                404:
+                    description: Error with rides get read
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+components:
+    schemas:
+        route_id:
+            description: Уникальный идентификатор маршрута
+            type: integer
+        routes:
+            type: array
+            items:
+                $ref: "#/components/schemas/route"
+        route:
+            type: object
+            required:
+                - id
+                - route_name
+                - creator_id
+                - point_start
+                - point_end
+                - point_other
+            properties:
+                id:
+                    $ref: "#/components/schemas/route_id"
+                route_name:
+                    type: string
+                creator_id:
+                    type: integer
+                point_start:
+                    type: string
+                point_end:
+                    type: string
+                point_other:
+                    type: string
+        Error:
+            type: object
+            required:
+                - message
+            properties:
+                message:
+                    description: Сообщение об ошибке
+                    type: string
+    securitySchemes:
+        basicAuth:
+            type: http
+            scheme: basic
+security:
+    - basicAuth: []

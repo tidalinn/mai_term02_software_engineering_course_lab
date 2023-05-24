@@ -1,0 +1,249 @@
+openapi: "3.0.0"
+info:
+    version: "1.0.0"
+    phone: "API RideService"
+    description: API для работы с поездками
+servers:
+    - url: http://localhost:8081
+      description: Ride server
+paths:
+    /add_category:
+        post:
+            summary: Добавление категории
+            parameters:
+                - name: name_of_category
+                  description: Название категории
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: The category was created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/category"
+                404:
+                    description: The category was not created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+    /add_ride:
+        post:
+            summary: Добавление поездки
+            parameters:
+                - name: ride_name
+                  description: Название поездки
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+                - name: creator_id
+                  description: Организатор поездки
+                  in: query
+                  required: true
+                  schema:
+                      type: integer
+                - name: category_id
+                  description: Категория поездки
+                  in: query
+                  required: true
+                  schema:
+                      type: integer
+                - name: description
+                  description: Описание поездки
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+                - name: ride_date
+                  description: Дата поездки
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+                - name: total_followers
+                  description: Количество попутчиков
+                  in: query
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                "200":
+                    description: The ride was added
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ride"
+                404:
+                    description: Error with ride adding
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+    /read_all_routes_from_ride:
+        get:
+            parameters:
+                - name: ride_id
+                  description: Идентификатор поездки
+                  in: query
+                  required: true
+                  schema:
+                      type: integer
+            summary: Получить список всех маршрутов поездки
+            responses:
+                "200":
+                    description: All routes of ride were printed
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/rides"
+                404:
+                    description: Error with printing rides
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+    /add_route_to_ride:
+        post:
+            summary: Добавление маршрута в поездку
+            parameters:
+                - name: route_id
+                  description: Уникальный идентификатор маршрута
+                  in: query
+                  required: true
+                  schema:
+                      type: integer
+                - name: ride_id
+                  description: Уникальный идентификатор поездки
+                  in: query
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                "200":
+                    description: The route was added
+                404:
+                    description: Error with route adding
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+components:
+    schemas:
+        categories:
+            type: array
+            items:
+                $ref: "#/components/schemas/category"
+        category:
+            type: object
+            required:
+                - id
+                - name_of_category
+            properties:
+                id:
+                    type: integer
+                name_of_category:
+                    type: string
+        rides:
+            type: array
+            items:
+                $ref: "#/components/schemas/ride"
+        ride:
+            type: object
+            required:
+                - id
+                - ride_name
+                - creator_id
+                - category_id
+                - description
+                - ride_date
+                - total_followers
+            properties:
+                id:
+                    type: integer
+                ride_name:
+                    type: string
+                creator_id:
+                    type: integer
+                category_id:
+                    type: integer
+                description:
+                    type: string
+                ride_date:
+                    type: string
+                total_followers:
+                    type: integer
+        route_rides:
+            type: array
+            items:
+                $ref: "#/components/schemas/route_ride"
+        route_ride:
+            type: object
+            required:
+                - id
+                - ride_name
+                - creator_id
+                - category_id
+                - description
+                - ride_date
+                - total_followers
+            properties:
+                id:
+                    type: integer
+                ride_name:
+                    type: string
+                creator_id:
+                    type: integer
+                category_id:
+                    type: integer
+                description:
+                    type: string
+                ride_date:
+                    type: string
+                total_followers:
+                    type: integer
+        Error:
+            type: object
+            required:
+                - message
+            properties:
+                message:
+                    description: Сообщение об ошибке
+                    type: string
+    securitySchemes:
+        basicAuth:
+            type: http
+            scheme: basic
+security:
+    - basicAuth: []
