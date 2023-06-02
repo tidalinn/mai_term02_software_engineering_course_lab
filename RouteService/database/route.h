@@ -30,7 +30,7 @@ namespace database
             static void init();
             std::vector<Route> read_all_routes();
             std::optional<Route> search_route(long id);
-            void add_Route(std::string route_name, long creator_id, std::string point_start, std::string point_end, std::string point_other);
+            void add_route(std::string route_name, long creator_id, std::string point_start, std::string point_end, std::string point_other);
 
             Poco::JSON::Object::Ptr toJSON() const;
 
