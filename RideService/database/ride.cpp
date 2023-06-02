@@ -79,7 +79,7 @@ namespace database
         ride.category_id() = object->getValue<long>("category_id");
         ride.description() = object->getValue<std::string>("description");
         ride.ride_date() = object->getValue<std::string>("ride_date");
-        ride.total_followers() = object->getValue<std::string>("total_followers");
+        ride.total_followers() = object->getValue<long>("total_followers");
 
         return ride;
     }
@@ -147,7 +147,7 @@ namespace database
         return _ride_date;
     }
 
-    std::string &Ride::total_followers()
+    long &Ride::total_followers()
     {
         return _total_followers;
     }
