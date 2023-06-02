@@ -72,7 +72,7 @@ namespace database
         return routeride;
     }
 
-    void RouteRide::add_Route_to_ride(long route_id, long ride_id)
+    void RouteRide::add_route_to_ride(long route_id, long ride_id)
     {
         try
         {
@@ -99,7 +99,7 @@ namespace database
         }
     }
 
-    std::vector<RouteRide> RouteRide::read_all_Routes_from_ride(long ride_id)
+    std::vector<RouteRide> RouteRide::read_all_routes_from_ride(long ride_id)
     {
         try
         {
